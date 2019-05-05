@@ -3,28 +3,51 @@ const promisify = require('util').promisify;
 const cheerio = require('cheerio');
 // const fs = require('fs');
 
-const print = require('./print');
+const print = require('./print-util');
 
 const endpoint = 'https://bundlephobia.com/api/size?package=';
 
 const getJsonAsync = promisify(createHttpGetOfType(/^application\/json/));
 const getHtmlAsync = promisify(createHttpGetOfType(/text\/html/));
-(async () => {
+
+module.exports = async pkgName => {
+  let json;
+  let html;
   try {
-    const json = await getJsonAsync(endpoint + 'pify').then(JSON.parse);
-    const html = await getHtmlAsync(json.repository + '/blob/master/package.json');
+    json = await getJsonAsync(endpoint + pkgName).then(JSON.parse);
+  } catch(e) {
+    console.error(`
+      Error: Failed to get package url for package: ${pkgName}
+    `);
+    return;
+  }
+  if(!json.repository) {
+    return console.error('ya basic');
+  }
+  try {
+    html = await getHtmlAsync(json.repository + '/blob/master/package.json');
+  } catch(e) {
+    console.error(`
+      Error: Failed to get github page: ${json.repository + '/blob/master/package.json'}
+    `);
+    return;
+  }
+  try {
     // write to file to see what you get!
     // fs.writeFileSync('./test.html', html)
     const $ = cheerio.load(html);
-    let jsonString = ''
+    let jsonString = '';
     $('.js-file-line').each((i, el) => {
-      jsonString += $(el).text().trim()
+      jsonString += $(el).text().trim();
     })
-    print(JSON.parse(jsonString))
+    print(JSON.parse(jsonString));
   } catch (e) {
-    console.error(e);
+    console.error(`
+      Error: Failed to parse html and print package contents
+    `);
+    return;
   }
-})();
+}
 
 // copy + paste from: https://nodejs.org/api/http.html#http_http_get_options_callback
 function createHttpGetOfType (type) {

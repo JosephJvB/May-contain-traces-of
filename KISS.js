@@ -2,11 +2,13 @@
 const fs = require('fs')
 const path = require('path')
 
-const print = require('./print');
+const print = require('./print-util');
 
-const jsonPath = path.join(__dirname, 'package.json');
-const rawData = fs.readFileSync(jsonPath, 'utf8');
-
-const rawJson = JSON.parse(rawData);
-
-print(rawJson);
+module.exports = () => {
+  const jsonPath = path.join(__dirname, 'package.json');
+  const rawData = fs.readFileSync(jsonPath, 'utf8');
+  
+  const rawJson = JSON.parse(rawData);
+  
+  print(rawJson);
+}
