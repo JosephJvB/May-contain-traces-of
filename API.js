@@ -1,6 +1,7 @@
 const https = require('https');
 const promisify = require('util').promisify;
 const cheerio = require('cheerio');
+// const fs = require('fs');
 
 const print = require('./print');
 
@@ -11,8 +12,15 @@ const getHtmlAsync = promisify(createHttpGetOfType(/text\/html/));
 (async () => {
   try {
     const json = await getJsonAsync(endpoint + 'pify').then(JSON.parse);
-    const html = await getHtmlAsync(json.repository);
-    console.log(html);
+    const html = await getHtmlAsync(json.repository + '/blob/master/package.json');
+    // write to file to see what you get!
+    // fs.writeFileSync('./test.html', html)
+    const $ = cheerio.load(html);
+    let jsonString = ''
+    $('.js-file-line').each((i, el) => {
+      jsonString += $(el).text().trim()
+    })
+    print(JSON.parse(jsonString))
   } catch (e) {
     console.error(e);
   }

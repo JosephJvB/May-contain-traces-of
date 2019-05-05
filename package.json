@@ -8,7 +8,6 @@
   "author": "Me",
   "license": "I have my full drivers licence",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "pify": "^4.0.1"
+    "cheerio": "^1.0.0-rc.3"
   }
 }
