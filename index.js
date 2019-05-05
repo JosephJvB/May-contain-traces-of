@@ -1,3 +1,5 @@
+#! /usr/env/bin node
+
 const printLocalPackage = require('./KISS');
 const printRemotePackage = require('./API');
 

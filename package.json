@@ -1,9 +1,12 @@
 {
-  "name": "list-ingredients",
+  "name": "may-contain-traces-of",
   "version": "1.0.1",
   "description": "I made this",
   "main": "index.js",
   "repository": "JosephJvB/May-contain-traces-of",
+  "bin": {
+    "list-ingredients": "index.js"
+  },
   "scripts": {},
   "keywords": [],
   "author": "Me",
