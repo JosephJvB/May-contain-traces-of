@@ -1,8 +1,9 @@
 {
   "name": "list-ingredients",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "I made this",
   "main": "index.js",
+  "repository": "JosephJvB/May-contain-traces-of",
   "scripts": {},
   "keywords": [],
   "author": "Me",
