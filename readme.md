@@ -1,4 +1,4 @@
-# List-Ingredients
+# May contain traces of...
 
 Just some idea I had sitting in the bath and looking at the bottle of body-wash I have. Ingredient lists are something we are all pretty familiar with. For me I had lots of allergies as a kid so I was browsing them often.
 
