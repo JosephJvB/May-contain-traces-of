@@ -1,0 +1,13 @@
+{
+  "name": "list-ingredients",
+  "version": "1.0.0",
+  "description": "I made this",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Me",
+  "license": "I have my full drivers licence",
+  "dependencies": {
+    "pify": "^4.0.1"
+  }
+}
