@@ -9,4 +9,6 @@ module.exports = rawJson => {
   `;
 
   console.log(ingredients);
+
+  return rawJson;
 }

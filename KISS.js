@@ -10,5 +10,5 @@ module.exports = () => {
   
   const rawJson = JSON.parse(rawData);
   
-  print(rawJson);
+  return print(rawJson);
 }
