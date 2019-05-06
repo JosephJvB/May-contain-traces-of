@@ -10,40 +10,44 @@ const getJsonAsync = createHttpGetOfType(/^application\/json/);
 const getHtmlAsync = createHttpGetOfType(/text\/html/);
 
 module.exports = async pkgName => {
-
-  // get package github repository url from bundlephobia API
-  const BPJson = await getJsonAsync(endpoint + pkgName).then(JSON.parse)
-  .catch(e => {
-    console.error(`
-      Failed to get package url for package: ${pkgName}
-    `);
-  })
-
-  if(!BPJson.repository) {
-    console.error(`
-      Found package data did not include repository field\n${JSON.stringify(BPJson, null, 2)}
-    `);
-  }
-
-  // get html content github package.json page
-  const html = await getHtmlAsync(BPJson.repository + '/blob/master/package.json')
-  .catch(e => {
-      console.error(`
-        Failed to get github page: ${BPJson.repository + '/blob/master/package.json'}
+  try {
+    // get package github repository url from bundlephobia API
+    const BPJson = await getJsonAsync(endpoint + pkgName).then(JSON.parse)
+    .catch(e => {
+      throw new Error(`
+        Failed to get from BundlePhobia API for package: ${pkgName}
       `);
-  });
+    })
   
-  // write to file to see what you get!
-  // fs.writeFileSync('./test.html', html)
-
-  // scrape package.json content and assemble it as a JSON object
-  const $ = cheerio.load(html);
-  let jsonString = '';
-  $('.js-file-line').each((i, el) => {
-    jsonString += $(el).text().trim();
-  })
+    if(!BPJson.repository) {
+      throw new Error(`
+        BundlePhobia result did not include github repository url field
+        ${JSON.stringify(BPJson, null, 2)}
+      `);
+    }
   
-  return print(JSON.parse(jsonString));
+    // get html content github package.json page
+    const html = await getHtmlAsync(BPJson.repository + '/blob/master/package.json')
+    .catch(e => {
+        throw new Error(`
+          Failed to get github page: ${BPJson.repository + '/blob/master/package.json'}
+        `);
+    });
+    
+    // write to file to see what you get!
+    // fs.writeFileSync('./test.html', html)
+  
+    // scrape package.json content and assemble it as a JSON object
+    const $ = cheerio.load(html);
+    let jsonString = '';
+    $('.js-file-line').each((i, el) => {
+      jsonString += $(el).text().trim();
+    })
+    
+    return print(JSON.parse(jsonString));
+  } catch(e) {
+    console.error(e.message);
+  }
 }
 
 // wrapper function for native node https module
