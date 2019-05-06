@@ -1,13 +1,24 @@
 # May contain traces of...
 
-Just some idea I had sitting in the bath and looking at the bottle of body-wash I have. Ingredient lists are something we are all pretty familiar with. For me I had lots of allergies as a kid so I was browsing them often.
+Read package.json and then creates a list of dependencies & dev-dependencies.
 
-Cool so enough sharing. Im gonna make something that reads package.json's and then creates a list of "ingredients" aka dependencies & dev-deps.
+### Usage:
+```sh
+list-ingredients [package-name]
+# output is a the list of ingredients of the requested package
 
-## usage:
-**Basic:** Run against a directory with a package.json at top level, output will be the ingredients of the local package.json.
+# eg:
+list-ingredients cheerio
 
-**More exciting:** run with 1st arg of any npm package name. output will be the ingredients of that packages package.json file.
+# output:
+# [ingredients]: css-select, dom-serializer, entities, htmlparser2, lodash
+# [may contain traces of]: benchmark, coveralls, expect.js, istanbul, jquery, jsdom, jshint, mocha, xyz
+
+```
 
 ### TODO
-- publish!
+- change package name back to `may-contain-traces-of`
+  - Im new to npm publishing, I deleted a package and thought I could immediately publish the same package under the same name. I was wrong.
+- Read more package.jsons
+  - Calling `list-ingredients` with -gh `username/repo` finds a package.json for that given repo..
+  - Calling `list-ingredients` with a file path attempts to read a local package.json
