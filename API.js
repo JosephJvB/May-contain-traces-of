@@ -1,23 +1,20 @@
 const https = require('https');
-const cheerio = require('cheerio');
-// const fs = require('fs');
 
 const print = require('./print-util');
-
-const endpoint = 'https://bundlephobia.com/api/size?package=';
-
-const getJsonAsync = createHttpGetOfType(/^application\/json/);
-const getHtmlAsync = createHttpGetOfType(/text\/html/);
 
 module.exports = async pkgName => {
   try {
     // get package github repository url from bundlephobia API
-    const BPJson = await getJsonAsync(endpoint + pkgName).then(JSON.parse)
+    const BPJson = await httpGetJsonAsync({
+      url: 'https://bundlephobia.com/api/size?package=' + pkgName,
+      expectedType: /^application\/json/
+    })
     .catch(e => {
+      console.error(e);
       throw new Error(`
         Failed to get from BundlePhobia API for package: ${pkgName}
       `);
-    })
+    });
   
     if(!BPJson.repository) {
       throw new Error(`
@@ -26,25 +23,20 @@ module.exports = async pkgName => {
       `);
     }
   
-    // get html content github package.json page
-    const html = await getHtmlAsync(BPJson.repository + '/blob/master/package.json')
+    // get parsed-json content from rawgithub/package.json page
+    const rawGithubUrl = BPJson.repository.replace('https://github.com', 'https://raw.githubusercontent.com');
+    const parsedPackageJson = await httpGetJsonAsync({
+      url: rawGithubUrl + '/master/package.json',
+      expectedType: /text\/plain/
+    })
     .catch(e => {
+      console.error(e);
         throw new Error(`
-          Failed to get github page: ${BPJson.repository + '/blob/master/package.json'}
+          Failed to get github page: ${rawGithubUrl + '/master/package.json'}
         `);
     });
     
-    // write to file to see what you get!
-    // fs.writeFileSync('./test.html', html)
-  
-    // scrape package.json content and assemble it as a JSON object
-    const $ = cheerio.load(html);
-    let jsonString = '';
-    $('.js-file-line').each((i, el) => {
-      jsonString += $(el).text().trim();
-    })
-    
-    return print(JSON.parse(jsonString));
+    return print(parsedPackageJson);
   } catch(e) {
     console.error(e.message);
   }
@@ -52,39 +44,43 @@ module.exports = async pkgName => {
 
 // wrapper function for native node https module
 // can be done more 'tidily' with 3rd party package like node-fetch. This was me trying stuff out.
-function createHttpGetOfType (type) {
-  return function (url) {
-    return new Promise((resolve, reject) => {
-      // copy + paste from: https://nodejs.org/api/http.html#http_http_get_options_callback
-      https.get(url, (res) => {
-        const { statusCode } = res;
-        const contentType = res.headers['content-type'];
-      
-        let error;
-        if (statusCode !== 200) {
-          error = new Error('Request Failed.\n' +
-                            `Status Code: ${statusCode}`);
-        } else if (!type.test(contentType)) {
-          error = new Error('Invalid content-type.\n' +
-                            `Expected ${type} but received ${contentType}`);
-        }
-        if (error) {
-          reject(error);
-          // Consume response data to free up memory
-          res.resume();
-          return;
-        }
-      
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
-        res.on('end', () => {
-          // success request complete
-          resolve(rawData);
-        });
-      }).on('error', (e) => {
-        reject(e);
-      });    
-    })
-  }
+function httpGetJsonAsync ({url, expectedType}) {
+  return new Promise((resolve, reject) => {
+    // copy + paste from: https://nodejs.org/api/http.html#http_http_get_options_callback
+    https.get(url, (res) => {
+      const { statusCode } = res;
+      const contentType = res.headers['content-type'];
+    
+      let error;
+      if (statusCode !== 200) {
+        error = new Error('Request Failed.\n' +
+                          `Status Code: ${statusCode}`);
+      } else if (!expectedType.test(contentType)) {
+        error = new Error('Invalid content-type.\n' +
+                          `Expected ${expectedType} but received ${contentType}`);
+      }
+      if (error) {
+        // from docs: Consume response data to free up memory
+        // from joe: what is this? Is it useful for me? There's another method called res.destroy()...
+        // DOCS: However, if a 'response' event handler is added, then the data from the response object must be consumed, either by calling response.read() whenever there is a 'readable' event, or by adding a 'data' handler, or by calling the .resume() method. Until the data is consumed, the 'end' event will not fire. Also, until the data is read it will consume memory that can eventually lead to a 'process out of memory' error.
+        // so would res.destroy do anything different? ionno
+        res.resume();
+        console.error(error);
+        reject(error);
+        return;
+      }
+    
+      res.setEncoding('utf8');
+      let rawData = '';
+      res.on('data', (chunk) => { rawData += chunk; });
+      res.on('end', () => {
+        // success request complete
+        // expect valid json every time
+        resolve(JSON.parse(rawData));
+      });
+    }).on('error', (e) => {
+      console.error(e);
+      reject(e);
+    });    
+  })
 }

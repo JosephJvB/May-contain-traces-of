@@ -1,6 +1,6 @@
 {
-  "name": "jvb-may-contain-traces-of",
-  "version": "1.0.3",
+  "name": "may-contain-traces-of",
+  "version": "1.0.4",
   "description": "I made this",
   "main": "index.js",
   "repository": "JosephJvB/May-contain-traces-of",
@@ -11,7 +11,5 @@
   "keywords": [],
   "author": "Me",
   "license": "I have my full drivers licence",
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.3"
-  }
+  "dependencies": {}
 }

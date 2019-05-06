@@ -10,3 +10,18 @@ if(args.length) {
 } else {
   printLocalPackage();
 }
+
+// dont know what Im doing but here's some stuff
+// boilerplate node process error event listeners
+// process.on('uncaughtException', e => {
+//   console.error(`
+//     Uncaught exception: ${e.message}
+//   `)
+//   process.exit(1);
+// });
+// process.on('unhandledRejection', e => {
+//   console.error(`
+//     Unhandled promise rejection: ${e.message}
+//   `)
+//   process.exit(1);
+// });
