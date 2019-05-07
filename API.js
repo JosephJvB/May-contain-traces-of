@@ -15,7 +15,7 @@ module.exports = async pkgName => {
         Failed to get from BundlePhobia API for package: ${pkgName}
       `);
     });
-  
+
     if(!BPJson.repository) {
       throw new Error(`
         BundlePhobia result did not include github repository url field
@@ -36,7 +36,7 @@ module.exports = async pkgName => {
         `);
     });
     
-    return print(parsedPackageJson);
+    return print(parsedPackageJson, BPJson.repository);
   } catch(e) {
     console.error(e.message);
   }

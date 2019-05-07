@@ -11,9 +11,9 @@ list-ingredients [package-name]
 list-ingredients cheerio
 
 # output:
+# [source]: https://github.com/cheeriojs/cheerio
 # [ingredients]: css-select, dom-serializer, entities, htmlparser2, lodash
 # [may contain traces of]: benchmark, coveralls, expect.js, istanbul, jquery, jsdom, jshint, mocha, xyz
-
 ```
 
 ### TODO
