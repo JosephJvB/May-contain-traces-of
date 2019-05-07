@@ -76,7 +76,17 @@ function httpGetJsonAsync ({url, expectedType}) {
       res.on('end', () => {
         // success request complete
         // expect valid json every time
-        resolve(JSON.parse(rawData));
+        // is this try catch overkill?
+        try {
+          const validJson = JSON.parse(rawData);
+          resolve(validJson);
+        } catch (e) {
+          console.error(e);
+          reject(`
+            Failed to parse response as JSON
+            ${rawData}
+          `);
+        }
       });
     }).on('error', (e) => {
       console.error(e);

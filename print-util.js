@@ -3,6 +3,8 @@ module.exports = rawJson => {
   const devDeps = Object.keys(rawJson.devDependencies || {});
 
   const ingredients = `
+    [source]: https://github.com/${rawJson.repository}
+
     [ingredients]: ${deps.join(', ') || 'none!'}
 
     [may contain traces of]: ${devDeps.join(', ') || 'nothing!'}
