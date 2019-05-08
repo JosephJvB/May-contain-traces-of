@@ -36,7 +36,7 @@ module.exports = async pkgName => {
         `);
     });
     
-    return print(parsedPackageJson, BPJson.repository);
+    return print(parsedPackageJson, BPJson.repository, BPJson.size);
   } catch(e) {
     console.error(e.message);
   }
